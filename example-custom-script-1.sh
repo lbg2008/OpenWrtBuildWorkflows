@@ -35,9 +35,8 @@
 #patch content
 #EOF
 #git apply example.patch
-sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
-
 # Add a feed source
+sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
 echo 'src-git fancontrol https://github.com/lbg2008/fancontrol.git' >>feeds.conf.default
 echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main' >>feeds.conf.default
