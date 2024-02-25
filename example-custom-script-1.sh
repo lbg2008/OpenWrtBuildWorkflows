@@ -38,4 +38,3 @@
 # Add a feed source
 sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 echo 'src-git helloworld https://github.com/fw876/helloworld.git' >>feeds.conf.default
-echo 'src-git fancontrol https://github.com/lbg2008/fancontrol.git' >>feeds.conf.default
