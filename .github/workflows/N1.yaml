@@ -57,7 +57,7 @@ python3-distutils rsync unzip zlib1g-dev file wget"
   # The following are options of where the firmware needs to be transfered. 
   COWTRANSFER_FIRMWARE: false
   WETRANSFER_FIRMWARE: false
-  RELEASE_FIRMWARE: false
+  RELEASE_FIRMWARE: true
   # Change the following to your time zone.
   TIME_ZONE: Asia/Shanghai
 
