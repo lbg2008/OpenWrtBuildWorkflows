@@ -16,6 +16,7 @@
 name: Build N1
 
 on:
+  repository_dispatch:
   workflow_dispatch:
     inputs:
       armbian_url:
