@@ -184,15 +184,7 @@ jobs:
           echo "build_tag=${releases_tag_keywords}_${{ inputs.openwrt_storage }}_$(date +"%Y.%m")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Clone packit source code
-        working-directory: /builder
-        if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
-        run: |
-          SCRIPT_REPO_URL="https://github.com/unifreq/openwrt_packit"
-          SCRIPT_REPO_BRANCH="master"
-          SELECT_PACKITPATH="openwrt_packit"
-          git clone -q --single-branch --depth=1 --branch=${SCRIPT_REPO_BRANCH} ${SCRIPT_REPO_URL} ${SELECT_PACKITPATH}
-          ln -sf /builder/${SELECT_PACKITPATH} /opt/${SELECT_PACKITPATH}
+
 
       - name: Package OpenWrt Firmware
         uses: ophub/flippy-openwrt-actions@main
