@@ -41,6 +41,7 @@ jobs:
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.15.95_6.1.15
           SCRIPT_S905D: mk_s905d_n1.sh
+          WHOAMI: Ellis
           
       - name: Upload OpenWrt Firmware to Release
         uses: ncipollo/release-action@main
@@ -57,6 +58,7 @@ jobs:
             - Default WIFI name: OpenWrt
             - Default WIFI password: none
             ### Install to EMMC
-            - Login to OpenWrt → System → Amlogic Service → Install OpenWrt
+            - 1、Use Luci：Login to OpenWrt → System → Amlogic Service → Install OpenWrt
+            - 2、Use SSH：cd /root   ./install-to-emmc.sh
             ### OpenWrt Image Verification
             - sha256sum
