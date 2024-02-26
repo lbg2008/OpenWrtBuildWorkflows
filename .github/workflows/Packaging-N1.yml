@@ -34,9 +34,8 @@ jobs:
 
   check:
     name: Check for source code updates
-    runs-on: ubuntu-20.04
-    outputs:
-      cache-hit: ${{ steps.cache-hash.outputs.cache-hit }}
+    runs-on: ubuntu-latest
+
       
   build:
     name: Build firmware
@@ -44,7 +43,7 @@ jobs:
     needs: check
     permissions:
       contents: write
-    if: needs.check.outputs.cache-hit != 'true' || github.event.inputs.force-build == 'true'
+
 
     steps:
       - name: Checkout
