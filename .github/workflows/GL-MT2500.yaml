@@ -50,7 +50,6 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
-
     - name: 配置 Feeds
       run: |
         cp -f $GITHUB_WORKSPACE/mt2500.config $GITHUB_WORKSPACE/openwrt/
@@ -59,12 +58,6 @@ jobs:
         ./scripts/feeds install -a
         cp -f $GITHUB_WORKSPACE/mt2500.config $GITHUB_WORKSPACE/openwrt/
         ./scripts/feeds install -a
-
-    - name: 修改 Lan IP
-      run: |
-        cd openwrt
-        sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
-        neofetch
 
     - name: 下载依赖
       run: |
@@ -98,6 +91,6 @@ jobs:
         tag: "${{ env.DEVICE }}--${{ env.FILE_DATE }}"
         artifacts: "openwrt/bin/targets/*/*/*"
         body: |
-          # 未测试×
+          GL-MT2500
           
-          IP: 192.168.2.1 | Password: none
+          IP: 192.168.2.1 | Password: password
