@@ -53,5 +53,5 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GH_TOKEN }}
           body: |
-          ## 以下为N1的最新固件
-          默认IP：192.168.2.5 默认密码： password
+          ## 以下为N1的固件
+          ## 默认IP：192.168.1.1 默认密码： password
