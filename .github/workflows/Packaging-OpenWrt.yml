@@ -159,6 +159,5 @@ jobs:
           OPENWRT_ARMVIRT: https://github.com/lbg2008/OpenWrtBuildWorkflows/releases/download/2024.02.27-0305/openwrt-armsr-armv8-generic-rootfs.tar.gz
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.15.95_6.1.15
-          WHOAMI: ${{ inputs.builder_name }}
 
       
