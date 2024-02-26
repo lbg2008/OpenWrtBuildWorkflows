@@ -1,4 +1,4 @@
-name: Gl-MT2500
+name: GL-MT2500
 
 on:
   repository_dispatch:
