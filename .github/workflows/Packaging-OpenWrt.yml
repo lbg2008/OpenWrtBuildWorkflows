@@ -70,10 +70,6 @@ jobs:
           sudo chown -R runner.runner /builder
           df -Th
 
-       
-
-
-
       - name: Package OpenWrt Firmware
         uses: unifreq/openwrt_packit@master
         env:
