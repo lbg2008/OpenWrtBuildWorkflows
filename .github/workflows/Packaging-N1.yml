@@ -102,10 +102,7 @@ on:
           - yourname
 
 env:
-  TZ: Asia/Shanghai
-  BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
-gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
-python3-distutils rsync unzip zlib1g-dev file wget"
+  TZ: America/New_York
 
 jobs:
   build:
@@ -128,7 +125,7 @@ jobs:
           sudo rm -f /swapfile /mnt/swapfile
           sudo -E apt-get -y update
           sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
-          sudo -E apt-get -y install $BUILD_DEPENDS
+          sudo -E apt-get -y install $(curl -fsSL https://is.gd/depend_ubuntu2204_openwrt)
           sudo -E systemctl daemon-reload
           #sudo -E apt-get -y full-upgrade
           sudo -E apt-get -y autoremove --purge
@@ -137,6 +134,7 @@ jobs:
           sudo rm -rf ~/{.cargo,.dotnet,.rustup}
           sudo timedatectl set-timezone "${TZ}"
           echo "status=success" >> ${GITHUB_OUTPUT}
+
       - name: Create simulated physical disk
         run: |
           mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 1)
@@ -154,12 +152,57 @@ jobs:
           sudo mount /dev/github/runner /builder
           sudo chown -R runner.runner /builder
           df -Th
-      
+
+      - name: Download armvirt file
+        id: download
+        working-directory: /builder
+        if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
+        run: |
+          armvirt_tarfile_repo="ophub/amlogic-s9xxx-openwrt"
+          releases_tag_keywords="OpenWrt_lede"
+
+          armvirt_tarfile_path="openwrt/bin/targets/armvirt/64"
+          [[ -d "${armvirt_tarfile_path}" ]] || mkdir -p ${armvirt_tarfile_path}
+          ln -sf /builder/openwrt ${GITHUB_WORKSPACE}/openwrt
+
+          latest_version="$(curl -s \
+                              -H "Accept: application/vnd.github+json" \
+                              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                              https://api.github.com/repos/${armvirt_tarfile_repo}/releases?per_page=100 |
+                              jq '.[]' |
+                              jq -s --arg RTK "${releases_tag_keywords}" '.[] | select(.tag_name | contains($RTK))' |
+                              jq -s '.[].assets[] | {data:.updated_at, url:.browser_download_url}' |
+                              jq -s --arg BOARD "-rootfs.tar.gz" '.[] | select(.url | endswith($BOARD))' |
+                              jq -s 'sort_by(.data)|reverse[]' |
+                              jq -s '.[0]' -c
+                          )"
+
+          [[ "${latest_version}" == "null" ]] && echo "Invalid OpenWrt rootfs download address." && exit 1
+          latest_updated_at="$(echo ${latest_version} | jq -r '.data')"
+          latest_url="$(echo ${latest_version} | jq -r '.url')"
+
+          openwrt_filename="${latest_url##*/}"
+          curl -fsSL "${latest_url}" -o "${armvirt_tarfile_path}/${openwrt_filename}"
+          [[ "${?}" -ne "0" ]] && echo "Invalid OpenWrt rootfs download address." && exit 1
+
+          echo "build_tag=${releases_tag_keywords}_${{ inputs.openwrt_storage }}_$(date +"%Y.%m")" >> ${GITHUB_OUTPUT}
+          echo "status=success" >> ${GITHUB_OUTPUT}
+
+      - name: Clone packit source code
+        working-directory: /builder
+        if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
+        run: |
+          SCRIPT_REPO_URL="https://github.com/unifreq/openwrt_packit"
+          SCRIPT_REPO_BRANCH="master"
+          SELECT_PACKITPATH="openwrt_packit"
+          git clone -q --single-branch --depth=1 --branch=${SCRIPT_REPO_BRANCH} ${SCRIPT_REPO_URL} ${SELECT_PACKITPATH}
+          ln -sf /builder/${SELECT_PACKITPATH} /opt/${SELECT_PACKITPATH}
+
       - name: Package OpenWrt Firmware
         uses: ophub/flippy-openwrt-actions@main
         if: ${{ steps.download.outputs.status }} == 'success' && !cancelled()
         env:
-          OPENWRT_ARMVIRT: https://github.com/lbg2008/OpenWrtBuildWorkflows/releases/download/2024.02.27-0305/openwrt-armsr-armv8-generic-rootfs.tar.gz
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
           SELECT_PACKITPATH: openwrt_packit
           PACKAGE_SOC: ${{ inputs.openwrt_soc }}
           KERNEL_REPO_URL: ${{ inputs.kernel_repo }}
