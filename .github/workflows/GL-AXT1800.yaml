@@ -37,7 +37,7 @@ env:
   REPO_NAME: GL-AXT1800
   REPO_URL: https://github.com/JiaY-shi/openwrt
   REPO_BRANCH: ipq60xx-devel_nss
-  BUILD_DEPENDS:  "$(curl -fsSL depends/openwrt)"
+  BUILD_DEPENDS: depends/openwrt
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
   CONFIG_FILE: configs/GL-AXT1800.config
