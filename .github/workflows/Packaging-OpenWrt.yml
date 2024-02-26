@@ -1,9 +1,3 @@
-#==========================================================================
-# Description: Packaging OpenWrt
-# Copyright (C) 2021 https://github.com/unifreq/openwrt_packit
-# Copyright (C) 2021 https://github.com/ophub/flippy-openwrt-actions
-#==========================================================================
-
 name: Packaging N1
 
 on:
