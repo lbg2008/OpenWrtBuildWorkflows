@@ -187,7 +187,7 @@ jobs:
 
 
       - name: Package OpenWrt Firmware
-        uses: ophub/flippy-openwrt-actions@main
+        uses: unifreq/openwrt_packit@master
         if: ${{ steps.download.outputs.status }} == 'success' && !cancelled()
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
@@ -201,7 +201,7 @@ jobs:
 
       - name: Upload OpenWrt Firmware to Release
         uses: ncipollo/release-action@main
-  
+        if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
         with:
           tag: ${{ steps.download.outputs.build_tag }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
