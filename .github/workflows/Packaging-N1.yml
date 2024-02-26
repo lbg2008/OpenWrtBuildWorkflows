@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
     inputs:
       armbian_url:
-        description: "Set *-rootfs.tar.gz file path."
+        description: "Set Armbian file path."
         required: false
         default: ""
 
