@@ -21,7 +21,7 @@ on:
       force-build:
         description: "Build new firmware anyway"
         required: false
-        default: "false"
+        default: "true"
       ssh:
         description: "SSH connection to Actions"
         required: false
@@ -51,7 +51,7 @@ rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wg
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
   CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/empty.sh
-  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/po2lmo.sh
+  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/example-custom-script-2.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -173,7 +173,7 @@ jobs:
         run: |
           cd openwrt/
           echo -e "$(nproc) thread compile"
-          make -j$(nproc) V=s
+          make -j$(nproc) defconfig download clean world V=s
           echo "status=success" >> $GITHUB_OUTPUT
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
