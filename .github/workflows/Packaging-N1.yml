@@ -10,10 +10,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      openwrt_url:
-        description: "Set OP file path."
-        required: false
-        default: ""
+
       openwrt_soc:
         description: "Select device board."
         required: false
