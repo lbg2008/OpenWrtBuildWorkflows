@@ -12,7 +12,7 @@ on:
     inputs:
       openwrt_address:
         description: "Set *rootfs.tar.gz file path"
-        required: false
+        required: true
         default: ""
       openwrt_kernel:
         description: "Select kernel version"
