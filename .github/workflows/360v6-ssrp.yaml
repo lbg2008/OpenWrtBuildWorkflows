@@ -53,11 +53,9 @@ jobs:
 
     - name: 配置 Feeds
       run: |
-        cp -f $GITHUB_WORKSPACE/360v6-ssrp.config $GITHUB_WORKSPACE/openwrt/
+        cp -f $GITHUB_WORKSPACE/$CONFIG_FILE $GITHUB_WORKSPACE/openwrt/
         cd openwrt
         ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        cp -f $GITHUB_WORKSPACE/360v6-ssrp.config $GITHUB_WORKSPACE/openwrt/
         ./scripts/feeds install -a
 
     - name: 下载依赖
