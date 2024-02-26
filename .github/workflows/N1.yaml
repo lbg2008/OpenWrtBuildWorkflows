@@ -36,7 +36,7 @@ env:
   # other workflows.
   REPO_NAME: N1
   REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: v23.05.2
+  REPO_BRANCH: main
   BUILD_DEPENDS:  "build-essential ccache ecj fastjar file g++ gawk \
 gettext git java-propose-classpath libelf-dev libncurses5-dev \
 libncursesw5-dev libssl-dev python python2.7-dev python3 unzip wget \
