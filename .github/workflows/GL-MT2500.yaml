@@ -19,7 +19,7 @@ env:
   UPLOAD_OUTPUT: true
 
 jobs:
-   _360t7:
+   GL-MT2500:
     runs-on: ubuntu-20.04
     permissions:
       contents: write
@@ -53,11 +53,11 @@ jobs:
 
     - name: 配置 Feeds
       run: |
-        cp -f $GITHUB_WORKSPACE/.config $GITHUB_WORKSPACE/openwrt/
+        cp -f $GITHUB_WORKSPACE/mt2500.config $GITHUB_WORKSPACE/openwrt/
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-        cp -f $GITHUB_WORKSPACE/.config $GITHUB_WORKSPACE/openwrt/
+        cp -f $GITHUB_WORKSPACE/mt2500.config $GITHUB_WORKSPACE/openwrt/
         ./scripts/feeds install -a
 
     - name: 修改 Lan IP
