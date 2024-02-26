@@ -1,1 +1,1 @@
-make package/feeds/luci/luci-base/compile V=s
+make package/feeds/luci/luci-base/compile -j1 clean download world V=s
