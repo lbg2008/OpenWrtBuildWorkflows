@@ -52,6 +52,3 @@ jobs:
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
           token: ${{ secrets.GH_TOKEN }}
-          body: |
-          ## 此为为N1的固件
-          默认IP：192.168.2.1 默认密码： password
