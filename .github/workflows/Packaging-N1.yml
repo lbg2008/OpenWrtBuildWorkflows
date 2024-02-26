@@ -13,7 +13,7 @@ on:
       openwrt_soc:
         description: "Select device board."
         required: false
-        default: "all"
+        default: "s905d"
         type: choice
         options:
           - all
@@ -98,7 +98,7 @@ on:
           - yourname
 
 env:
-  TZ: America/New_York
+  TZ: Asia/Shanghai
 
 jobs:
   build:
@@ -198,7 +198,7 @@ jobs:
         uses: ophub/flippy-openwrt-actions@main
         if: ${{ steps.download.outputs.status }} == 'success' && !cancelled()
         env:
-          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
+          OPENWRT_ARMVIRT: https://github.com/lbg2008/OpenWrtBuildWorkflows/releases/download/2024.02.27-0305/openwrt-armsr-armv8-generic-rootfs.tar.gz
           SELECT_PACKITPATH: openwrt_packit
           PACKAGE_SOC: ${{ inputs.openwrt_soc }}
           KERNEL_REPO_URL: ${{ inputs.kernel_repo }}
