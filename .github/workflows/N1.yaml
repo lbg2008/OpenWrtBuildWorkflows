@@ -35,7 +35,7 @@ env:
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
   REPO_NAME: N1
-  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: main
   BUILD_DEPENDS:  "build-essential ccache ecj fastjar file g++ gawk \
 gettext git java-propose-classpath libelf-dev libncurses5-dev \
@@ -44,13 +44,13 @@ python3-distutils python3-setuptools python3-dev rsync subversion \
 swig time xsltproc zlib1g-dev"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: N1.config
+  CONFIG_FILE: configs/N1.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
-  CUSTOM_SCRIPT_1: example-custom-script-1.sh
-  CUSTOM_SCRIPT_2: example-custom-script-2.sh
+  CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/example-custom-script-1.sh
+  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/example-custom-script-2.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -74,7 +74,7 @@ jobs:
       - name: Get Commit Hash
         id: get-hash
         run: |
-          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
+          git clone -b $REPO_BRANCH --single-branch $REPO_URL ./
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Compare Commit Hash
@@ -130,7 +130,7 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL openwrt/
+          git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1
@@ -233,7 +233,7 @@ jobs:
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "Build from $REPO_URL $REPO_BRANCH" >> release.txt
+          echo "$REPO_NAME --- Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt
           [ $COWTRANSFER_FIRMWARE = true ] && echo \
             "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
