@@ -19,7 +19,7 @@ env:
   UPLOAD_OUTPUT: true
 
 jobs:
-   360v6-ssrp:
+   360v6_ssrp:
     runs-on: ubuntu-20.04
     permissions:
       contents: write
