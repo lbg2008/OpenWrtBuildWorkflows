@@ -37,11 +37,9 @@ env:
   REPO_NAME: N1
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: main
-  BUILD_DEPENDS:  "build-essential ccache ecj fastjar file g++ gawk \
-gettext git java-propose-classpath libelf-dev libncurses5-dev \
-libncursesw5-dev libssl-dev python python2.7-dev python3 unzip wget \
-python3-distutils python3-setuptools python3-dev rsync subversion \
-swig time xsltproc zlib1g-dev"
+  BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
+gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
+python3-distutils rsync unzip zlib1g-dev file wget"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
   CONFIG_FILE: configs/N1.config
@@ -117,11 +115,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo rm -rf /etc/apt/sources.list.d/*
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install $BUILD_DEPENDS
-          sudo -E apt-get -qq autoremove --purge
-          sudo -E apt-get -qq clean
+          sudo -E apt-get -qq install -y $BUILD_DEPENDS
+          sudo -E apt-get -qq autoremove
           sudo timedatectl set-timezone $TIME_ZONE
           sudo mkdir -p /workdir/
           sudo chown $USER:$GROUPS /workdir/
