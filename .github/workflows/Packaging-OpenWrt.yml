@@ -14,93 +14,10 @@ on:
         description: "Set *rootfs.tar.gz file path"
         required: false
         default: ""
-      openwrt_soc:
-        description: "Select device board."
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - all
-          - s922x_s905x3_s905x2_s912_s905d_s905
-          - ak88
-          - beikeyun
-          - cm3
-          - e25
-          - ht2
-          - h28k
-          - h66k
-          - h68k
-          - h69k
-          - h69k-max
-          - h88k
-          - h88k-v3
-          - l1pro
-          - photonicat
-          - qemu
-          - r66s
-          - r68s
-          - jp-tvbox
-          - watermelon-pi
-          - rock5b
-          - s905
-          - s905d
-          - s905x2
-          - s905x3
-          - s912
-          - s922x
-          - s922x-n2
-          - vplus
-          - zcube1-max
-          - diy
       openwrt_kernel:
         description: "Select kernel version"
         required: false
-        default: "5.15.1_6.1.1"
-        type: choice
-        options:
-          - 5.4.1_5.10.1
-          - 5.15.1_6.1.1
-          - 5.4.1
-          - 5.10.1
-          - 5.15.1
-          - 6.1.1
-          - 5.10.110
-          - 6.1.27
-      kernel_repo:
-        description: "Set the kernel repository"
-        required: false
-        default: "breakings/OpenWrt"
-        type: choice
-        options:
-          - breakings/OpenWrt
-          - ophub/kernel
-      auto_kernel:
-        description: "Auto use the latest kernel"
-        required: false
-        default: true
-        type: boolean
-      script_diy_path:
-        description: "Set custom script loading path"
-        required: false
-        default: ""
-      openwrt_storage:
-        description: "Select image storage type."
-        required: false
-        default: "save"
-        type: choice
-        options:
-          - save
-          - temp
-      builder_name:
-        description: "Set OpenWrt builder signature."
-        required: false
-        default: "ophub"
-        type: choice
-        options:
-          - ophub
-          - angel
-          - yourname
-
+        default: "5.15.95_6.1.15"
 env:
   TZ: America/New_York
 
