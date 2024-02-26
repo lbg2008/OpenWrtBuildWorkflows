@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build GL-AXT1800
+name: Build GL-AXT1800-ssrp
 
 on:
   workflow_dispatch:
