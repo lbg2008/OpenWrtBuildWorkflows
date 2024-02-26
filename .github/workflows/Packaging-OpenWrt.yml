@@ -121,7 +121,7 @@ jobs:
           sudo rm -rf ~/{.cargo,.dotnet,.rustup}
       
       - name: Package OpenWrt Firmware
-          uses: lbg2008/openwrt_packit@master
+          uses: ophub/flippy-openwrt-actions@main
           env:
           OPENWRT_ARMVIRT: https://github.com/lbg2008/OpenWrtBuildWorkflows/releases/download/2024.02.27-0305/openwrt-armsr-armv8-generic-rootfs.tar.gz
           PACKAGE_SOC: all
