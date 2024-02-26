@@ -51,7 +51,7 @@ rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wg
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
   CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/empty.sh
-  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/example-custom-script-2.sh
+  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/po2lmo.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -150,12 +150,6 @@ jobs:
         run: |
           [ -e files ] && mv files/ openwrt/files/
           [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
- 
-      - name: Run custom-script-2
-        run: |
-          chmod +x $CUSTOM_SCRIPT_2
-          cd openwrt/
-          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
 
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main
@@ -173,12 +167,18 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
+      - name: Run custom-script-2
+        run: |
+          chmod +x $CUSTOM_SCRIPT_2
+          cd openwrt/
+          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
+
       - name: Compile the firmware
         id: compile
         run: |
           cd openwrt/
           echo -e "$(nproc) thread compile"
-          make -j1 V=s
+          make -j$(nproc) V=s
           echo "status=success" >> $GITHUB_OUTPUT
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
