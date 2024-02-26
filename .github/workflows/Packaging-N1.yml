@@ -48,7 +48,7 @@ jobs:
           tag: openwrt_armvirt_v8_${{ env.PACKAGED_OUTPUTDATE }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
           ## 以下为N1的固件
           ## 默认IP：192.168.1.1 默认密码： password
