@@ -134,6 +134,8 @@ jobs:
           df -hT $PWD
           git clone $REPO_URL openwrt/
           cd openwrt/
+          git config --global user.email "shi05275@163.com"
+          git config --global user.name "JiaY-shi"
           python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
           ./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
