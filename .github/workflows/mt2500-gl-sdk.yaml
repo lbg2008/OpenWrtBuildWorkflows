@@ -75,8 +75,8 @@ jobs:
           git clone $REPO_URL ./
           git config --global user.email "shi05275@163.com"
           git config --global user.name "JiaY-shi"
-          python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
-          ./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
+          python3 setup.py -c configs/config-mt798x-7.6.6.1.yml && cd mt7981
+          ./scripts/gen_config.py target_mt7981_gl-mt2500 luci
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Compare Commit Hash
@@ -136,8 +136,8 @@ jobs:
           cd openwrt/
           git config --global user.email "shi05275@163.com"
           git config --global user.name "JiaY-shi"
-          python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
-          ./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
+          python3 setup.py -c configs/config-mt798x-7.6.6.1.yml && cd mt7981
+          ./scripts/gen_config.py target_mt7981_gl-mt2500 luci
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1
