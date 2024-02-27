@@ -133,6 +133,7 @@ jobs:
         run: |
           df -hT $PWD
           git clone $REPO_URL openwrt/
+          cd openwrt/
           python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
           ./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
@@ -140,7 +141,7 @@ jobs:
       - name: Run custom-script-1
         run: |
           chmod +x $CUSTOM_SCRIPT_1
-          cd openwrt/wlan-ap/openwrt
+          cd openwrt/wlan-ap/openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_1
 
       - name: Update feeds
