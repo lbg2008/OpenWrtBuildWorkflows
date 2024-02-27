@@ -73,6 +73,8 @@ jobs:
         id: get-hash
         run: |
           git clone $REPO_URL ./
+          git config --global user.email "shi05275@163.com"
+          git config --global user.name "JiaY-shi"
           python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
           ./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
