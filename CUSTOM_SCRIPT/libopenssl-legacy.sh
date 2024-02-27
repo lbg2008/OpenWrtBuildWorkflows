@@ -16,3 +16,4 @@
 #patch content
 #EOF
 #git apply example.patch
+sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
