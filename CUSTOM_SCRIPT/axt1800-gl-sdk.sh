@@ -36,8 +36,4 @@
 #EOF
 #git apply example.patch
 # Add a feed source
-python3 setup.py -c configs/config-wlan-ap.yml && cd wlan-ap/openwrt
-./scripts/gen_config.py target_wlan_ap-gl-axt1800 luci
-sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
-echo 'src-git helloworld https://github.com/fw876/helloworld.git' >>feeds.conf.default
-echo 'src-git fancontrol https://github.com/JiaY-shi/fancontrol.git' >>feeds.conf.default
+sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
