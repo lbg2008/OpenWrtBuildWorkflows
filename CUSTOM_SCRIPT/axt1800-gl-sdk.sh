@@ -36,4 +36,4 @@
 #EOF
 #git apply example.patch
 # Add a feed source
-sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
+echo 'src-git fancontrol https://github.com/JiaY-shi/fancontrol.git' >>feeds.conf.default
