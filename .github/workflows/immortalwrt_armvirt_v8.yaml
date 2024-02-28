@@ -34,7 +34,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  REPO_NAME: openwrt_armvirt_v8
+  REPO_NAME: immortalwrt_armvirt_v8
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: v21.02.7
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
