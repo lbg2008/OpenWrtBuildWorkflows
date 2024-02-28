@@ -14,7 +14,20 @@ on:
         description: "Set *rootfs.tar.gz file path"
         required: true
         default: ""
-
+      openwrt_kernel:
+        description: "Select kernel version"
+        required: false
+        default: "5.15.1_6.1.1"
+        type: choice
+        options:
+          - 5.4.1_5.10.1
+          - 5.15.1_6.1.1
+          - 5.4.1
+          - 5.10.1
+          - 5.15.1
+          - 6.1.1
+          - 5.10.110
+          - 6.1.27
 env:
   TZ: Asia/Shanghai
 
@@ -39,7 +52,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: ${{ inputs.openwrt_address }}
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 5.15.95_6.1.15
+          KERNEL_VERSION_NAME: ${{ inputs.openwrt_kernel }}
           SCRIPT_S905D: mk_s905d_n1.sh
           WHOAMI: Ellis
           
