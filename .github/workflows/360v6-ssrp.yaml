@@ -64,7 +64,7 @@ python3-distutils rsync unzip zlib1g-dev file wget"
 jobs:
   check:
     name: Check for source code updates
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     outputs:
       cache-hit: ${{ steps.cache-hash.outputs.cache-hit }}
 
@@ -90,7 +90,7 @@ jobs:
 
   build:
     name: Build firmware
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: check
     permissions:
       contents: write
