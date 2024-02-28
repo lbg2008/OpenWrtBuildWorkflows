@@ -19,4 +19,4 @@
 ./scripts/feeds update packages
 sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
 rm -rf feeds/packages/lang/golang
-svn co https://github.com/openwrt/packages/tree/openwrt-22.03/lang/golang feeds/packages/lang/golang
+svn co https://github.com/openwrt/packages/branches/openwrt-22.03/lang/golang feeds/packages/lang/golang
