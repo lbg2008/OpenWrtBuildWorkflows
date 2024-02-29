@@ -35,7 +35,7 @@ env:
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
   REPO_NAME: 360v6
-  REPO_URL: https://github.com/sdf8057/ipq6000.git
+  REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
 gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
@@ -72,7 +72,7 @@ jobs:
       - name: Get Commit Hash
         id: get-hash
         run: |
-          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL ./
+          git clone $REPO_URL ./
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Compare Commit Hash
@@ -128,7 +128,7 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          git clone --depth 1 --branch $REPO_BRANCH --single-branch $REPO_URL openwrt/
+          git clone $REPO_URL openwrt/
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1
