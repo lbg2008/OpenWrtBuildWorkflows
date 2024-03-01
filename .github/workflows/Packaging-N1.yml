@@ -34,7 +34,7 @@ env:
 jobs:
   build:
     runs-on: oracle-chuncheon
-
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
     steps:
       - name: Checkout
