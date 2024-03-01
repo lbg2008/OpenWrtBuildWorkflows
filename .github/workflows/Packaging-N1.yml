@@ -46,7 +46,6 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo timedatectl set-timezone "${TZ}"
-
       - name: Package OpenWrt Firmware
         uses: lbg2008/openwrt_packit@master
         env:
