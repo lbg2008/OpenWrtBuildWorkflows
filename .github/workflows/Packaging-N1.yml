@@ -33,7 +33,7 @@ env:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
     steps:
@@ -46,7 +46,6 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          sudo su
 
       - name: Package OpenWrt Firmware
         uses: lbg2008/openwrt_packit@master
