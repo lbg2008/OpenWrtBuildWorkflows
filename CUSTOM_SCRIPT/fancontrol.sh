@@ -36,6 +36,7 @@
 #EOF
 #git apply example.patch
 # Add a feed source
+echo 'src-git nss_packages https://github.com/qosmio/nss-packages.git;NSS-12.4-K6.1' >>feeds.conf.default
 echo 'src-git fancontrol https://github.com/JiaY-shi/fancontrol.git' >>feeds.conf.default
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 #echo 'src-git helloworld https://github.com/fw876/helloworld.git' >>feeds.conf.default
