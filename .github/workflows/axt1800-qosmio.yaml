@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build GL-AXT1800
+name: Build GL-AXT1800-qosmio
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  REPO_NAME: GL-AXT1800
+  REPO_NAME: GL-AXT1800-qosmio
   REPO_URL: https://github.com/JiaY-shi/openwrt
   REPO_BRANCH: ipq60xx-devel
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
