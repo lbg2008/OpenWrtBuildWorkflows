@@ -48,7 +48,7 @@ python3-distutils rsync unzip zlib1g-dev file wget"
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
   CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/empty.sh
-  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/empty.sh
+  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/libopenssl-legacy.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -152,8 +152,6 @@ jobs:
         run: |
           chmod +x $CUSTOM_SCRIPT_2
           cd openwrt/
-          sed -i "s/PKG_VERSION:=0.49.0/PKG_VERSION:=0.65.2/g" "feeds/packages/net/dnsproxy/Makefile"
-          sed -i "s/PKG_HASH:=4a6a698d830195fd8c04dd32c67e872bfd304fc39dbdaa982935892566b3ae37/PKG_HASH:=7c863404075daf76f1c6b291cc473670cbc45651af8f409e488c10a47fb73117/g" "feeds/packages/net/dnsproxy/Makefile"
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
 
       - name: SSH connection to Actions
