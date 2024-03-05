@@ -9,31 +9,15 @@
 #-------------------------------------------------------------------------------------------------------
 #
 #
-# This script will run before feeds update, something you want to do at that moment should be written here.
-# A common function of this script is to modify the cloned OpenWrt source code. 
-#
-# For instance, you can edit the feeds.conf.default to induct packages you need.
-# This is followed by some editing examples.
-# # Clear the feeds.conf.default and append the feed sources you need one by one:
-#cat /dev/null > a.txt
-#echo 'src-git-full packages https://git.openwrt.org/feed/packages.git;openwrt-22.03' >> feeds.conf.default
-#echo 'src-git-full luci https://git.openwrt.org/project/luci.git;openwrt-22.03' >> feeds.conf.default
-#echo 'src-git-full routing https://git.openwrt.org/feed/routing.git;openwrt-22.03' >> feeds.conf.default
-#echo 'src-git-full telephony https://git.openwrt.org/feed/telephony.git;openwrt-22.03' >> feeds.conf.default
-# # Replace a feed source with what you want:
-#sed '/feeds-name/'d feeds.conf.default
-#echo 'method feed-name path/URL' >> feeds.conf.default
-# # Uncomment a feed source:
-#sed -i 's/^#\(.*feed-name\)/\1/' feeds.conf.default
-# # Replace src-git-full with src-git to reduce the depth of cloning:
-#sed -i 's/src-git-full/src-git/g' feeds.conf.default
-#
-# You can also modify the source code by patching.
+# Patching is generally recommended.
 # # Here's a template for patching:
 #touch example.patch
 #cat>example.patch<<EOF
 #patch content
 #EOF
 #git apply example.patch
-# Add a feed source
-echo 'src-git fancontrol https://github.com/JiaY-shi/fancontrol.git' >>feeds.conf.default
+sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
+#sed -i "s/PKG_VERSION:=0.49.0/PKG_VERSION:=0.65.2/g" "feeds/packages/net/dnsproxy/Makefile"
+#sed -i "s/PKG_HASH:=4a6a698d830195fd8c04dd32c67e872bfd304fc39dbdaa982935892566b3ae37/PKG_HASH:=7c863404075daf76f1c6b291cc473670cbc45651af8f409e488c10a47fb73117/g" "feeds/packages/net/dnsproxy/Makefile"
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
