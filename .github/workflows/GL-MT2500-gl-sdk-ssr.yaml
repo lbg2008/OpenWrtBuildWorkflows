@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build GL-MT2500-gl-sdk-passwall
+name: Build GL-MT2500-gl-sdk-SSR
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  REPO_NAME: GL-MT2500-gl-sdk-passwall
+  REPO_NAME: GL-MT2500-gl-sdk-SSR
   REPO_URL: https://github.com/lbg2008/gl-infra-builder
   REPO_BRANCH: main
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
@@ -42,12 +42,12 @@ gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
 python3-distutils rsync unzip zlib1g-dev file wget"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: configs/mt2500-gl-sdk-passwall.config
+  CONFIG_FILE: configs/mt2500-gl-sdk-ssr.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
-  CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/passwall.sh
+  CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/helloworld.sh
   CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/empty.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
