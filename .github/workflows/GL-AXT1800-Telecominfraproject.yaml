@@ -35,7 +35,7 @@ env:
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
   REPO_NAME: GL-AXT1800-Telecominfraproject
-  REPO_URL: https://github.com/lbg2008/gl-infra-builder
+  REPO_URL: https://github.com/Telecominfraproject/wlan-ap
   REPO_BRANCH: main
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
 gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
