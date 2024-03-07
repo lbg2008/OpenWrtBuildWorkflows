@@ -75,7 +75,7 @@ jobs:
           git clone $REPO_URL ./
           git config --global user.email "shi05275@163.com"
           git config --global user.name "JiaY-shi"
-          python3 setup.py -c configs/config-wlan-ap-5.4.yml && cd wlan-ap/openwrt
+          ./setup.py --setup && cd openwrt
           ./scripts/gen_config.py target_wlan_ap-gl-axt1800-5-4 luci
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
@@ -136,31 +136,31 @@ jobs:
           cd openwrt/
           git config --global user.email "shi05275@163.com"
           git config --global user.name "JiaY-shi"
-          python3 setup.py -c configs/config-wlan-ap-5.4.yml && cd wlan-ap/openwrt
+          python3 setup.py -c configs/config-wlan-ap-5.4.yml && cd openwrt
           ./scripts/gen_config.py target_wlan_ap-gl-axt1800-5-4 luci
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1
         run: |
           chmod +x $CUSTOM_SCRIPT_1
-          cd openwrt/wlan-ap/openwrt/
+          cd openwrt/openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_1
 
       - name: Update feeds
-        run: cd openwrt/wlan-ap/openwrt/ && ./scripts/feeds update -a
+        run: cd openwrt/openwrt/ && ./scripts/feeds update -a
 
       - name: Install feeds
-        run: cd openwrt/wlan-ap/openwrt/ && ./scripts/feeds install -a
+        run: cd openwrt/openwrt/ && ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
-          [ -e files ] && mv files/ openwrt/wlan-ap/openwrt/files/
-          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/wlan-ap/openwrt/.config
+          [ -e files ] && mv files/ openwrt/openwrt/files/
+          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/openwrt/.config
  
       - name: Run custom-script-2
         run: |
           chmod +x $CUSTOM_SCRIPT_2
-          cd openwrt/wlan-ap/openwrt/
+          cd openwrt/openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
 
       - name: SSH connection to Actions
@@ -173,7 +173,7 @@ jobs:
       - name: Download packages
         id: download-packages
         run: |
-          cd openwrt/wlan-ap/openwrt/
+          cd openwrt/openwrt/
           make defconfig
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
@@ -182,7 +182,7 @@ jobs:
       - name: Compile the firmware
         id: compile
         run: |
-          cd openwrt/wlan-ap/openwrt/
+          cd openwrt/openwrt/
           echo -e "$(nproc) thread compile"
           make -j$(nproc) || make -j1 || make -j1 V=s
           echo "status=success" >> $GITHUB_OUTPUT
@@ -199,12 +199,12 @@ jobs:
         if: steps.compile.outputs.status == 'success' && env.STORE_PRODUCTS == 'true'
         with:
           name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-          path: openwrt/wlan-ap/openwrt/bin/
+          path: openwrt/openwrt/bin/
 
       - name: Organize firmware-related files
         id: organize-files
         run: |
-          cd openwrt/wlan-ap/openwrt/bin/targets/*/*
+          cd openwrt/openwrt/bin/targets/*/*
           rm -rf packages/
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
