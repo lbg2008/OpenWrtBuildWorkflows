@@ -27,3 +27,4 @@ sed -i "s/lan = "eth0"/lan = "eth0"/g" "target/linux/mediatek/files-5.4/arch/arm
 sed -i "s/mtketh-wan = "eth1"/mtketh-wan = "eth1"/g" "target/linux/mediatek/files-5.4/arch/arm64/boot/dts/mediatek/mt7981-gl-mt2500.dts"
 sed -i "s/mtketh-lan = "eth0"/mtketh-lan = "eth0"/g" "target/linux/mediatek/files-5.4/arch/arm64/boot/dts/mediatek/mt7981-gl-mt2500.dts"
 sed -i "s/mtketh-ppd = "eth0"/mtketh-ppd = "eth0"/g" "target/linux/mediatek/files-5.4/arch/arm64/boot/dts/mediatek/mt7981-gl-mt2500.dts"
+sed -i "s/ucidef_set_interfaces_lan_wan eth1 eth0/ucidef_set_interfaces_lan_wan eth0 eth1/g" "target/linux/mediatek/mt7981/base-files/etc/board.d/02_network"
