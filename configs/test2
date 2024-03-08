@@ -80,7 +80,11 @@
 };
 
 &soc {
-	pwm:pwm {
+	ess-switch@3a000000 {
+		switch_lan_bmp = <0xc>;
+		};
+
+		pwm: pwm {
 		#pwm-cells = <2>;
 		pinctrl-0 = <&pwm_pins>;
 		pinctrl-names = "default";
