@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build GL-AXT1800-Telecominfraproject
+name: Build AXT1800
 
 on:
   workflow_dispatch:
@@ -34,21 +34,21 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  REPO_NAME: GL-AXT1800-Telecominfraproject
-  REPO_URL: https://github.com/Telecominfraproject/wlan-ap
-  REPO_BRANCH: v2.11.0
+  REPO_NAME: 360v6
+  REPO_URL: https://github.com/sdf8057/ipq6000.git
+  REPO_BRANCH: master
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
 gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
 python3-distutils rsync unzip zlib1g-dev file wget"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: configs/GL-AXT1800-Telecominfraproject.config
+  CONFIG_FILE: configs/360v6-ssrp.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
-  CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/GL-AXT1800-Telecominfraproject.sh
-  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/GL-AXT1800-SDK-SSR.sh
+  CUSTOM_SCRIPT_1: CUSTOM_SCRIPT/empty.sh
+  CUSTOM_SCRIPT_2: CUSTOM_SCRIPT/libopenssl-legacy.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -73,10 +73,6 @@ jobs:
         id: get-hash
         run: |
           git clone $REPO_URL ./
-          git config --global user.email "shi05275@163.com"
-          git config --global user.name "JiaY-shi"
-          ./setup.py --setup && cd openwrt
-          ./scripts/gen_config.py glinet_axt1800
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Compare Commit Hash
@@ -133,38 +129,29 @@ jobs:
         run: |
           df -hT $PWD
           git clone $REPO_URL openwrt/
-          cd openwrt/
-          git config --global user.email "shi05275@163.com"
-          git config --global user.name "JiaY-shi"
-          git pull
-          git branch -a
-          git tag
-          git checkout $REPO_BRANCH
-          ./setup.py --setup && cd openwrt
-          ./scripts/gen_config.py glinet_axt1800
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Run custom-script-1
         run: |
           chmod +x $CUSTOM_SCRIPT_1
-          cd openwrt/openwrt/
+          cd openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_1
 
       - name: Update feeds
-        run: cd openwrt/openwrt/ && ./scripts/feeds update -a
+        run: cd openwrt/ && ./scripts/feeds update -a
 
       - name: Install feeds
-        run: cd openwrt/openwrt/ && ./scripts/feeds install -a
+        run: cd openwrt/ && ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
-          [ -e files ] && mv files/ openwrt/openwrt/files/
-          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/openwrt/.config
+          [ -e files ] && mv files/ openwrt/files/
+          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
  
       - name: Run custom-script-2
         run: |
           chmod +x $CUSTOM_SCRIPT_2
-          cd openwrt/openwrt/
+          cd openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
 
       - name: SSH connection to Actions
@@ -177,7 +164,7 @@ jobs:
       - name: Download packages
         id: download-packages
         run: |
-          cd openwrt/openwrt/
+          cd openwrt/
           make defconfig
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
@@ -186,9 +173,9 @@ jobs:
       - name: Compile the firmware
         id: compile
         run: |
-          cd openwrt/openwrt/
+          cd openwrt/
           echo -e "$(nproc) thread compile"
-          make -j$(nproc) || make -j1 || make -j1 V=s
+          make -j$(nproc) V=s
           echo "status=success" >> $GITHUB_OUTPUT
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
@@ -203,12 +190,12 @@ jobs:
         if: steps.compile.outputs.status == 'success' && env.STORE_PRODUCTS == 'true'
         with:
           name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-          path: openwrt/openwrt/bin/
+          path: openwrt/bin/
 
       - name: Organize firmware-related files
         id: organize-files
         run: |
-          cd openwrt/openwrt/bin/targets/*/*
+          cd openwrt/bin/targets/*/*
           rm -rf packages/
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
@@ -244,7 +231,7 @@ jobs:
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "$REPO_NAME -- Build from $REPO_URL $REPO_BRANCH" >> release.txt
+          echo "$REPO_NAME --- Build from $REPO_URL $REPO_BRANCH" >> release.txt
           [ $COWTRANSFER_FIRMWARE = true -o $WETRANSFER_FIRMWARE = true ] && echo 'Products transfer:' >> release.txt
           [ $COWTRANSFER_FIRMWARE = true ] && echo \
             "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
@@ -262,7 +249,7 @@ jobs:
 
   clean:
     name: Clean up old assets
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       actions: write
       contents: write
