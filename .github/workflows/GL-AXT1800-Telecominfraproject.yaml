@@ -136,7 +136,7 @@ jobs:
           cd openwrt/
           git config --global user.email "shi05275@163.com"
           git config --global user.name "JiaY-shi"
-          ./setup.py --setup && cd openwrt/openwrt
+          ./setup.py --setup && cd openwrt
           ./scripts/gen_config.py glinet_axt1800
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
