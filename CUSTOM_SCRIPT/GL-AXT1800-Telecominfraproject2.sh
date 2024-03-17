@@ -19,4 +19,4 @@
 #sed -i "s/+chinadns-ng +dns2socks/+dns2socks/g" "feeds/passwall/luci-app-passwall/Makefile"
 sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
 rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+git clone https://github.com/lbg2008/packages_lang_golang -b 21.x feeds/packages/lang/golang
