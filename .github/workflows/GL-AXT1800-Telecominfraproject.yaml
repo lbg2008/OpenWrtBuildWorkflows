@@ -90,7 +90,7 @@ jobs:
         if: steps.cache-hash.outputs.cache-hit != 'true'
         run: |
           echo ${{ steps.get-hash.outputs.commit-hash }} | 
-            tee .$REPO_NAME-$REPO_BRANCH-commit-hash
+            tee .v2.11.0-$REPO_BRANCH-commit-hash
 
   build:
     name: Build firmware
