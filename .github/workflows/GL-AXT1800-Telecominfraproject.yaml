@@ -73,6 +73,8 @@ jobs:
         id: get-hash
         run: |
           git clone -b $REPO_BRANCH --single-branch $REPO_URL ./
+          git config --global user.email "shi05275@163.com"
+          git config --global user.name "JiaY-shi"
           ./setup.py --setup && cd wlan-ap/openwrt
           ./scripts/gen_config.py glinet_axt1800
           echo "commit-hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -132,6 +134,8 @@ jobs:
           df -hT $PWD
           git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt/
           cd openwrt/
+          git config --global user.email "shi05275@163.com"
+          git config --global user.name "JiaY-shi"
           ./setup.py --setup && cd openwrt/openwrt
           ./scripts/gen_config.py glinet_axt1800
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
