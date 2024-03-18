@@ -20,6 +20,7 @@ on:
         default: 'false'
 
 env:
+  REPO_NAME: 360v6-SSR
   REPO_URL: https://github.com/lbg2008/ipq6000.git
   REPO_BRANCH: main
   FEEDS_CONF: feeds.conf.default
@@ -165,7 +166,7 @@ jobs:
       run: |
         echo "release_tag=ipq6000_$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         touch release.txt
-        echo "ipq6000 firmware" >> release.txt
+        echo "$REPO_NAME -- Build from $REPO_URL $REPO_BRANCH" >> release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
