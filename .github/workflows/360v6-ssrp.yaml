@@ -22,7 +22,7 @@ on:
 env:
   REPO_NAME: 360v6-SSR
   REPO_URL: https://github.com/lbg2008/ipq6000.git
-  REPO_BRANCH: main
+  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: configs/360v6-ssrp.config
   DIY_P1_SH: CUSTOM_SCRIPT/empty.sh
