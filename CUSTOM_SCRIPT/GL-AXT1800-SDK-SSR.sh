@@ -5,3 +5,7 @@ rm -rf feeds/gl_feed_common/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/gl_feed_common/golang
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+rm -rf feeds/glinet/dnsproxy
+curl -L https://alist.320888.xyz/d/Oracle-Chuncheon/APP/dnsproxy-0.62.zip -o feeds/glinet/dnsproxy.zip
+unzip -d feeds/glinet/dnsproxy feeds/glinet/dnsproxy.zip
+rm feeds/glinet/dnsproxy.zip
