@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build Luma WRTQ-329ACN
+name: Build N1-openwrt-21.03
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ env:
   # REPO means the OpenWrt repo you want to build from in this workflow. 
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
-  REPO_NAME: Luma WRTQ-329ACN
+  REPO_NAME: N1-openwrt-21.03
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: v21.02.7
   BUILD_DEPENDS:  "build-essential clang flex bison g++ gawk \
@@ -42,7 +42,7 @@ gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
 python3-distutils rsync unzip zlib1g-dev file wget"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: configs/luma.config
+  CONFIG_FILE: configs/N1-openwrt-21.03.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
