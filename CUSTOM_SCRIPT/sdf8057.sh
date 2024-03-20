@@ -5,4 +5,4 @@ curl -L https://alist.320888.xyz/d/Oracle-Chuncheon/APP/dnsproxy-0.62.zip -o fee
 unzip -d feeds/packages/net/dnsproxy feeds/packages/net/dnsproxy.zip
 rm feeds/packages/net/dnsproxy.zip
 rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+git clone https://github.com/lbg2008/packages_lang_golang -b 22.x feeds/packages/lang/golang
