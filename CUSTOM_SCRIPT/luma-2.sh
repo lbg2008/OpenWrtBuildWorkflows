@@ -3,6 +3,7 @@ rm -rf feeds/fancontrol/gl-sdk4-fan
 rm -rf feeds/fancontrol/fancontrol
 rm -rf feeds/fancontrol/images
 rm -rf feeds/fancontrol/luci-app-fancontrol
+rm -rf feeds/packages/net/dnsproxy
 ./scripts/feeds update -a &&./scripts/feeds install -a
 sed -i 's/ +libopenssl-legacy//g' feeds/helloworld/shadowsocksr-libev/Makefile
 rm -rf feeds/packages/lang/golang
