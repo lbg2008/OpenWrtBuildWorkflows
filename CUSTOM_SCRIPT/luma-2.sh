@@ -12,5 +12,5 @@ rm -rf feeds/fancontrol/dnsproxy
 #curl -L https://alist-home.320888.xyz:2096/d/Oracle/App/dnsproxy-0.62.zip -o feeds/fancontrol/dnsproxy.zip
 #curl -L https://alist.320888.xyz/d/Oracle-Chuncheon/APP/dnsproxy-0.52.0.zip -o feeds/fancontrol/dnsproxy.zip
 curl -L https://alist.320888.xyz/d/Oracle-Chuncheon/APP/dnsproxy-0.62.zip -o feeds/fancontrol/dnsproxy.zip
-unzip -d feeds/fancontrol/dnsproxy feeds/glinet/dnsproxy.zip
+unzip -d feeds/fancontrol/dnsproxy feeds/fancontrol/dnsproxy.zip
 rm feeds/fancontrol/dnsproxy.zip
