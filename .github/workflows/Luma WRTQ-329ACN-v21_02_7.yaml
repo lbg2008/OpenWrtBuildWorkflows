@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build Luma WRTQ-329ACN
+name: Build Luma WRTQ-329ACN-v21_02_7
 
 on:
   workflow_dispatch:
