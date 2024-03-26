@@ -37,7 +37,7 @@ env:
   REPO_NAME: GL-AXT1800-sdf8057-SSR
   REPO_URL: https://github.com/lbg2008/ipq6000.git
   REPO_BRANCH: master
-  CONFIG_FILE: configs/GL-AXT1800-sdf8057-Passwall.config
+  CONFIG_FILE: configs/GL-AXT1800-sdf8057-SSR.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
