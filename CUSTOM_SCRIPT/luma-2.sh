@@ -12,3 +12,5 @@ rm -rf feeds/fancontrol/dnsproxy
 curl -L https://alist-home.320888.xyz/d/Oracle/App/dnsproxy.zip -o feeds/fancontrol/dnsproxy.zip
 unzip -d feeds/fancontrol/dnsproxy feeds/fancontrol/dnsproxy.zip
 rm feeds/fancontrol/dnsproxy.zip
+mkdir package/openwrt-packages
+git clone https://github.com/OrayOS/OpenOray package/oray-packages
