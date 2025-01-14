@@ -64,7 +64,7 @@ python3-distutils rsync unzip zlib1g-dev file wget"
 jobs:
   check:
     name: Check for source code updates
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       cache-hit: ${{ steps.cache-hash.outputs.cache-hit }}
 
@@ -88,7 +88,7 @@ jobs:
             tee .$REPO_NAME-$REPO_BRANCH-commit-hash
   build:
     name: Build firmware
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: check
     permissions:
       contents: write
@@ -238,7 +238,7 @@ jobs:
 
   clean:
     name: Clean up old assets
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       actions: write
       contents: write
