@@ -240,6 +240,9 @@ jobs:
             "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
           echo "status=success" >> $GITHUB_OUTPUT
 
+      - name: Create /lib32 directory
+        run: sudo mkdir -p /lib32
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@master
         if: steps.tag.outputs.status == 'success' && !cancelled()
