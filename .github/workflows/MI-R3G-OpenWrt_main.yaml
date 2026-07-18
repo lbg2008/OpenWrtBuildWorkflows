@@ -81,7 +81,6 @@ jobs:
           # 极致精简：覆盖写入，仅抬高最大连接数天花板
           mkdir -p files/etc
           cat > files/etc/sysctl.conf <<'EOF'
-
 # Optimize max conntrack limit
 net.netfilter.nf_conntrack_max=131072
 EOF
