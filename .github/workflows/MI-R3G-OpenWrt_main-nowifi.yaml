@@ -6,7 +6,7 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: v25.12.5
-  CONFIG_FILE: configs/MI-R3G-openwrt-25.12.03.config
+  CONFIG_FILE: configs/MI-R3G-openwrt-25.12.05-nowifi.config
   TZ: Asia/Shanghai
 
 jobs:
