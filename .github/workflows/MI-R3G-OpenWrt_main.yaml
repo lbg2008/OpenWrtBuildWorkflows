@@ -126,7 +126,7 @@ jobs:
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
           echo "" >> release.txt
           echo "Included:" >> release.txt
-          echo "- Pure Wired Gateway" >> release.txt
+          echo "- Include WIFI" >> release.txt
           echo "- PPPoE Support" >> release.txt
           echo "- VLAN Support" >> release.txt
           echo "- Hardware Flow Offload (MediaTek PPE)" >> release.txt
