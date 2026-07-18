@@ -1,4 +1,4 @@
-name: Build MI-R3G (Pure OpenWrt)
+name: Build MI-R3G No WIFI (Pure OpenWrt)
 
 on:
   workflow_dispatch:
