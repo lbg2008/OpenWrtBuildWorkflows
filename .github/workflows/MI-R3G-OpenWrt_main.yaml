@@ -1,4 +1,4 @@
-name: Build GL-MT2500 (Pure OpenWrt)
+name: Build MI-R3G (Pure OpenWrt)
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: v25.12.5
-  CONFIG_FILE: configs/GL-MT2500-OpenWrt_main.config
+  CONFIG_FILE: configs/MI-R3G-openwrt-25.12.03.config
   TZ: Asia/Shanghai
 
 jobs:
@@ -121,7 +121,7 @@ jobs:
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "GL.iNet GL-MT2500 (Brume 2) - Pure OpenWrt" >> release.txt
+          echo "Xiaomi Mi WiFi R3G - Pure OpenWrt" >> release.txt
           echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
           echo "" >> release.txt
