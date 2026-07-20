@@ -1,4 +1,4 @@
-name: Build 360V6 (Pure OpenWrt + Passwall)
+name: Build 360V6 (Pure OpenWrt+Xray)
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
 env:
   REPO_URL: https://github.com/qosmio/openwrt-ipq
   REPO_BRANCH: 25.12-nss
-  CONFIG_FILE: configs/360v6-qosmio-pw.config
+  CONFIG_FILE: configs/360v6-qosmio-xray.config
   TZ: Asia/Shanghai
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
           # 设置时区并初始化工作目录
           sudo timedatectl set-timezone "$TZ"
           sudo mkdir -p /workdir
-          sudo chown -R runner:runner /workdir  # 修正：赋予 github actions 默认的 runner 用户权限
+          sudo chown $USER:$GROUPS /workdir
 
       - name: Clone source code
         working-directory: /workdir
@@ -59,17 +59,11 @@ jobs:
           git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
-      - name: Update feeds (Inject Passwall)
+      - name: Update feeds
         run: |
           cd openwrt
-          # 核心修改 1：在 feeds.conf.default 的最顶部强制插入 Passwall 官方双源
-          sed -i '1i\src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main\nsrc-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' feeds.conf.default
-          
-          # 更新源
           ./scripts/feeds update -a
-          
-          # 核心修改 2：加入 -f 参数，强制用 Passwall 的最新核心覆盖系统自带老旧核心
-          ./scripts/feeds install -a -f
+          ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
@@ -81,7 +75,7 @@ jobs:
             exit 1
           fi
           
-          cp "$CONFIG_FILE" openwrt/.config  # 建议使用 cp 替代 mv
+          mv "$CONFIG_FILE" openwrt/.config
           cd openwrt
           make defconfig
 
@@ -127,15 +121,15 @@ jobs:
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "360V6 (Qosmio) - Pure OpenWrt + Passwall" >> release.txt
+          echo "360V6 (Qosmio) - Pure OpenWrt + Xray" >> release.txt
           echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
           echo "" >> release.txt
           echo "Included:" >> release.txt
           echo "- Pure Wired Gateway" >> release.txt
-          echo "- PPPoE & VLAN Support" >> release.txt
+          echo "- PPPoE Support" >> release.txt
+          echo "- VLAN Support" >> release.txt
           echo "- Hardware Flow Offload (Qualcomm NSS)" >> release.txt
-          echo "- Passwall (Xray Core Only, Nftables)" >> release.txt  # 标明版本特色
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Upload firmware to Release
