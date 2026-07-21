@@ -62,17 +62,23 @@ jobs:
           git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
-      - name: Add HomeProxy & Update feeds
+      - name: Update feeds
         run: |
           cd openwrt
-          git clone https://github.com/immortalwrt/homeproxy.git package/homeproxy
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
           [ -e files ] && mv files openwrt/files
-          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+          
+          # 致命错误阻断：仅确保指定的 .config 文件实际存在
+          if [ ! -e "$CONFIG_FILE" ]; then
+            echo "::error::Config file not found: $CONFIG_FILE"
+            exit 1
+          fi
+          
+          mv "$CONFIG_FILE" openwrt/.config
           cd openwrt
           make defconfig
 
