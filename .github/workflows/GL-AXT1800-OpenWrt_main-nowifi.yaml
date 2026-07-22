@@ -78,7 +78,24 @@ jobs:
           mv "$CONFIG_FILE" openwrt/.config
           cd openwrt
           make defconfig
-          
+
+      # ======== 深度定制 AXT1800 风扇逻辑 ========
+      - name: Tweak Fan behavior (60°C Smart Stop)
+        run: |
+          cd openwrt
+          DTS_FILE="target/linux/qualcommax/dts/qcom-ipq6018-gl-axt1800.dts"
+          if [ -f "$DTS_FILE" ]; then
+            sed -i '
+              s/cooling-levels = <36 128 192 255>;/cooling-levels = <0 128 192 255>;/;
+              s/temperature = <50000>;/temperature = <60000>;/;
+              s/hysteresis = <2000>;/hysteresis = <5000>;/;
+            ' "$DTS_FILE"
+            echo "Fan tweak success: Starts at 60°C, stops at 55°C, lowest speed is 0. Global hysteresis set to 5°C."
+          else
+            echo "::warning::DTS file not found, fan tweak skipped."
+          fi
+      # ==============================================
+      
       - name: Download packages
         run: |
           cd openwrt
