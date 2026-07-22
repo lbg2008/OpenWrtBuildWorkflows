@@ -80,7 +80,7 @@ jobs:
           make defconfig
 
       # ======== 定制 AXT1800 风扇逻辑========
-      - name: Tweak Fan behavior (60°C Smart Stop)
+      - name: Tweak Fan behavior (65°C Smart Stop)
         run: |
           cd openwrt
           DTS_FILE="target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6000-gl-axt1800.dts"
@@ -102,7 +102,7 @@ jobs:
           NEW_COOLING='cooling-levels = <0 128 192 255>;'
           
           OLD_TEMP='temperature = <50000>;'
-          NEW_TEMP='temperature = <60000>;'
+          NEW_TEMP='temperature = <65000>;'
           
           OLD_HYST='hysteresis = <2000>;'
           NEW_HYST='hysteresis = <5000>;'
