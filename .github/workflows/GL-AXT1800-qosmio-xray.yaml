@@ -1,4 +1,4 @@
-name: Build 360V6 (Pure OpenWrt+Xray)
+name: Build GL-AXT1800 (qosmio+Xray)
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
 env:
   REPO_URL: https://github.com/qosmio/openwrt-ipq
   REPO_BRANCH: 25.12-nss
-  CONFIG_FILE: configs/360v6-qosmio-xray.config
+  CONFIG_FILE: configs/GL-AXT1800-qosmio-xray.config
   TZ: Asia/Shanghai
 
 jobs:
@@ -79,6 +79,79 @@ jobs:
           cd openwrt
           make defconfig
 
+      # ======== 定制 AXT1800 风扇逻辑========
+      - name: Tweak Fan behavior (65°C Smart Stop)
+        run: |
+          cd openwrt
+          DTS_FILE="target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6000-gl-axt1800.dts"
+          
+          # 1. 文件存在检查
+          if [ ! -f "$DTS_FILE" ]; then
+            echo "::error::DTS file not found: $DTS_FILE"
+            exit 1
+          fi
+          
+          # 2. 设备身份确认 (模糊搜索硬件核心标识 gl-axt1800)
+          if ! grep -F -q -- 'gl-axt1800' "$DTS_FILE"; then
+            echo "::error::Unexpected DTS file content. Identifier 'gl-axt1800' not found."
+            exit 1
+          fi
+          
+          # 3. 定义特征变量 (DRY 原则，集中维护)
+          OLD_COOLING='cooling-levels = <36 128 192 255>;'
+          NEW_COOLING='cooling-levels = <0 128 192 255>;'
+          
+          OLD_TEMP='temperature = <50000>;'
+          NEW_TEMP='temperature = <65000>;'
+          
+          OLD_HYST='hysteresis = <2000>;'
+          NEW_HYST='hysteresis = <5000>;'
+          
+          # 封装计数函数，加入 -- 防止选项注入
+          count() {
+            grep -F -c -- "$1" "$DTS_FILE" || true
+          }
+          
+          # 4. 前置 Sanity Check: 统计上游旧值的特征数量
+          old_cooling_pre=$(count "$OLD_COOLING")
+          old_temp_pre=$(count "$OLD_TEMP")
+          old_hyst_pre=$(count "$OLD_HYST")
+          
+          if [ "$old_cooling_pre" -ne 1 ] || [ "$old_temp_pre" -ne 1 ] || [ "$old_hyst_pre" -ne 3 ]; then
+            echo "::error::Upstream DTS structure changed! Fan tweak sanity check failed."
+            echo "::error::Expected: cooling(1), temp(1), hyst(3)"
+            echo "::error::Found: cooling($old_cooling_pre), temp($old_temp_pre), hyst($old_hyst_pre)"
+            exit 1
+          fi
+          
+          # 5. 修改执行 (使用 | 作为安全分隔符)
+          sed -i \
+            -e "s|$OLD_COOLING|$NEW_COOLING|" \
+            -e "s|$OLD_TEMP|$NEW_TEMP|" \
+            -e "s|$OLD_HYST|$NEW_HYST|" \
+            "$DTS_FILE" || {
+            echo "::error::Failed to modify DTS file. 'sed' execution returned a non-zero exit code."
+            exit 1
+          }
+          
+          # 6. 修改后双向验证: 新值必现，旧值必灭
+          new_cooling=$(count "$NEW_COOLING")
+          new_temp=$(count "$NEW_TEMP")
+          new_hyst=$(count "$NEW_HYST")
+          
+          old_cooling_post=$(count "$OLD_COOLING")
+          old_temp_post=$(count "$OLD_TEMP")
+          old_hyst_post=$(count "$OLD_HYST")
+          
+          if [ "$new_cooling" -ne 1 ] || [ "$new_temp" -ne 1 ] || [ "$new_hyst" -ne 3 ] || \
+             [ "$old_cooling_post" -ne 0 ] || [ "$old_temp_post" -ne 0 ] || [ "$old_hyst_post" -ne 0 ]; then
+            echo "::error::Post-modification verification failed! Bidirectional check mismatched."
+            exit 1
+          fi
+          
+          echo "Fan tweak success: PWM levels 0/50/75/100%, fan curve 65/75/100°C, hysteresis 5°C."
+      # ==============================================
+
       - name: Download packages
         run: |
           cd openwrt
@@ -121,7 +194,7 @@ jobs:
         run: |
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "360V6 (Qosmio) - Pure OpenWrt + Xray" >> release.txt
+          echo "GL-AXT1800 (Qosmio) - Pure OpenWrt + Xray" >> release.txt
           echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
           echo "" >> release.txt
