@@ -1,0 +1,169 @@
+name: Build MI-R3G No WIFI (Pure OpenWrt)
+
+on:
+  workflow_dispatch:
+
+env:
+  REPO_URL: https://github.com/openwrt/openwrt.git
+  REPO_BRANCH: v25.12.5
+  CONFIG_FILE: configs/MI-R3G-openwrt-25.12.05-nowifi.config
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    name: Build firmware
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # 清理不必要的大型环境，释放磁盘空间
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          
+          # 更新软件源并安装编译依赖
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-setuptools rsync unzip zlib1g-dev file wget
+          
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          
+          # 设置时区并初始化工作目录
+          sudo timedatectl set-timezone "$TZ"
+          sudo mkdir -p /workdir
+          sudo chown $USER:$GROUPS /workdir
+
+      - name: Clone source code
+        working-directory: /workdir
+        run: |
+          df -hT $PWD
+          git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
+          ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+      - name: Update feeds
+        run: |
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Load custom configuration
+        run: |
+          [ -e files ] && mv files openwrt/files
+          
+          # 致命错误阻断：仅确保指定的 .config 文件实际存在
+          if [ ! -e "$CONFIG_FILE" ]; then
+            echo "::error::Config file not found: $CONFIG_FILE"
+            exit 1
+          fi
+          
+          mv "$CONFIG_FILE" openwrt/.config
+          cd openwrt
+          make defconfig
+          
+      - name: Download packages
+        run: |
+          cd openwrt
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+
+      - name: Compile the firmware
+        id: compile
+        run: |
+          cd openwrt
+          echo -e "$(nproc) thread compile"
+          
+          # 简化 fallback 逻辑，避免并行编译产生的状态污染单线程重试
+          make -j$(nproc) || make -j1 V=s
+          
+          echo "status=success" >> $GITHUB_OUTPUT
+          grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+          [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+
+      - name: Organize firmware-related files
+        id: organize-files
+        run: |
+          cd openwrt/bin/targets/*/*
+          rm -rf packages/
+          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload firmware directory (Artifacts)
+        uses: actions/upload-artifact@v4
+        if: steps.organize-files.outputs.status == 'success' && !cancelled()
+        with:
+          name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+          path: ${{ env.FIRMWARE }}
+
+      - name: Generate release tag
+        id: tag
+        if: steps.organize-files.outputs.status == 'success' && !cancelled()
+        run: |
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          touch release.txt
+          echo "Xiaomi Mi WiFi R3G - Pure OpenWrt" >> release.txt
+          echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
+          echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
+          echo "" >> release.txt
+          echo "Included:" >> release.txt
+          echo "- Pure Wired Gateway" >> release.txt
+          echo "- PPPoE Support" >> release.txt
+          echo "- VLAN Support" >> release.txt
+          echo "- Hardware Flow Offload (MediaTek PPE)" >> release.txt
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload firmware to Release
+        uses: softprops/action-gh-release@v2
+        if: steps.tag.outputs.status == 'success' && !cancelled()
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          body_path: release.txt
+          files: ${{ env.FIRMWARE }}/*
+
+      - name: Delete old workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 2
+          keep_minimum_runs: 2
+
+      - name: Delete older releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching releases..."
+          # 利用 jq 排除 draft 和 prerelease，并按时间戳严格倒序，跳过前20个最新版本进行清理
+          releases=$(gh release list \
+            --limit 100 \
+            --json tagName,createdAt,isDraft,isPrerelease \
+            --jq 'map(select(.isDraft == false and .isPrerelease == false)) | sort_by(.createdAt) | reverse | .[20:] | .[].tagName')
+
+          if [ -z "$releases" ]; then
+            echo "No older releases to delete."
+          else
+            while read release; do
+              # 跳过空行
+              [ -z "$release" ] && continue
+              echo "Deleting release and tag: $release"
+              gh release delete "$release" -y --cleanup-tag || true
+            done <<< "$releases"
+          fi
