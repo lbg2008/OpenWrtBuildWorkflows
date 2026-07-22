@@ -90,7 +90,7 @@ jobs:
               s/temperature = <50000>;/temperature = <60000>;/;
               s/hysteresis = <2000>;/hysteresis = <5000>;/;
             ' "$DTS_FILE"
-            echo "Fan tweak success: Starts at 60°C, stops at 55°C, lowest speed is 0. Global hysteresis set to 5°C."
+            echo "Fan tweak success: PWM levels 0/50/75/100%, fan curve 60/75/100°C, hysteresis 5°C."
           else
             echo "::warning::DTS file not found, fan tweak skipped."
           fi
