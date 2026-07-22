@@ -149,7 +149,7 @@ jobs:
             exit 1
           fi
           
-          echo "Fan tweak success: PWM levels 0/50/75/100%, fan curve 60/75/100°C, hysteresis 5°C."
+          echo "Fan tweak success: PWM levels 0/50/75/100%, fan curve 65/75/100°C, hysteresis 5°C."
       # ==============================================
       
       - name: Download packages
