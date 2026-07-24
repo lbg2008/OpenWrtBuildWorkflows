@@ -1,11 +1,21 @@
-name: Build GL-MT2500 - main
+name: Build GL-MT2500 (Pure OpenWrt)
 
 on:
   workflow_dispatch:
+    inputs:
+      repo_branch:
+        description: '选择要编译的 OpenWrt 版本 (Branch 或 Tag)'
+        required: true
+        default: 'openwrt-25.12'
+        type: choice
+        options:
+          - openwrt-25.12
+          - v25.12.5
+          - main
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: openwrt-25.12
+  REPO_BRANCH: ${{ inputs.repo_branch }}
   CONFIG_FILE: configs/GL-MT2500-OpenWrt_v25.12.5.config
   TZ: Asia/Shanghai
 
@@ -56,6 +66,7 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
+          # git clone -b 完美兼容 Branch 和 Tag 的拉取
           git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
@@ -112,16 +123,18 @@ jobs:
         uses: actions/upload-artifact@v4
         if: steps.organize-files.outputs.status == 'success' && !cancelled()
         with:
-          name: OpenWrt_firmware_test${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+          name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
           path: ${{ env.FIRMWARE }}
 
       - name: Generate release tag
         id: tag
         if: steps.organize-files.outputs.status == 'success' && !cancelled()
         run: |
-          echo "release_tag=$(date +"%Y.%m.%d-%H%M")-test" >> $GITHUB_OUTPUT
+          # 可以在 Release 的 Tag 上带上分支名称，方便以后在网页上一眼区分
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M")-${REPO_BRANCH}" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "GL.iNet GL-MT2500 (Brume 2) - Pure OpenWrt [Test Build]" >> release.txt
+          echo "GL.iNet GL-MT2500 (Brume 2) - Pure OpenWrt" >> release.txt
+          # 这里会自动变成你选择的比如 Source: OpenWrt openwrt-25.12
           echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
           echo "" >> release.txt
