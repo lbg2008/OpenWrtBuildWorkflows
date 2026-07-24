@@ -1,4 +1,4 @@
-name: Build GL-MT2500 (Pure OpenWrt)
+name: Build GL-MT2500-v25.12.5 (Pure OpenWrt)
 
 on:
   workflow_dispatch:
