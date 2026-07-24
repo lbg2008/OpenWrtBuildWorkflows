@@ -1,4 +1,4 @@
-name: Build GL-MT2500 (Pure OpenWrt) - Test
+name: Build GL-MT2500 - main
 
 on:
   workflow_dispatch:
