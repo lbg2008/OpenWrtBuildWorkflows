@@ -16,7 +16,7 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: ${{ inputs.repo_branch }}
-  CONFIG_FILE: configs/GL-MT2500-OpenWrt_v25.12.5.config
+  CONFIG_FILE: configs/GL-MT3600BE-OpenWrt_v25.12.5.config
   TZ: Asia/Shanghai
 
 jobs:
