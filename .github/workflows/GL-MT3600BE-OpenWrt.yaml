@@ -1,5 +1,4 @@
-name: Build GL-MT2500 (Pure OpenWrt)
-
+name: Build GL-MT3600BE (Pure OpenWrt)
 on:
   workflow_dispatch:
     inputs:
@@ -133,7 +132,7 @@ jobs:
           # 可以在 Release 的 Tag 上带上分支名称，方便以后在网页上一眼区分
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")-${REPO_BRANCH}" >> $GITHUB_OUTPUT
           touch release.txt
-          echo "GL.iNet GL-MT2500 (Brume 2) - Pure OpenWrt" >> release.txt
+          echo "GL.iNet GL-MT3600BE - Pure OpenWrt" >> release.txt
           # 这里会自动变成你选择的比如 Source: OpenWrt openwrt-25.12
           echo "Source: OpenWrt $REPO_BRANCH" >> release.txt
           echo "Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release.txt
