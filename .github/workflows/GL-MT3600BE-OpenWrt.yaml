@@ -110,7 +110,7 @@ jobs:
           
           # 2. 预检设备专用 DTS 文件 (防覆盖检查)
           # 如果设备专属的 dts 文件里未来被写入了 pwm-fan 或 cooling-levels，说明上游干预了风扇，需人工评估
-          if grep -q -E '&fan|cooling-levels' "$DTS_FILE"; then
+          if grep -q -E 'cooling-levels|active-low' "$DTS_FILE"; then
             echo "::error::Fan config overrides detected in $DTS_FILE!"
             echo "::error::Upstream might have added specific fan logic. Manual intervention required."
             exit 1
