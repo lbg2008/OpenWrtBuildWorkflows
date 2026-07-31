@@ -89,6 +89,56 @@ jobs:
           cd openwrt
           make defconfig
 
+      - name: Tweak Fan behavior (MT3600BE 70°C Smart Stop)
+        run: |
+          cd openwrt
+          
+          # 1. 动态定位文件 (锁定 dts 目录，避免误匹配 files/ 下的备份或补丁文件)
+          DTSI_FILE=$(find target/linux/mediatek/dts -type f -name "mt7987.dtsi" | head -n 1)
+          DTS_FILE=$(find target/linux/mediatek/dts -type f -name "*gl-mt3600be*.dts" | head -n 1)
+          
+          if [ -z "$DTSI_FILE" ]; then
+            echo "::error::DTSI file (mt7987.dtsi) not found!"
+            exit 1
+          fi
+          if [ -z "$DTS_FILE" ]; then
+            echo "::error::DTS file for GL-MT3600BE not found!"
+            exit 1
+          fi
+          echo "Found DTSI: $DTSI_FILE"
+          echo "Found DTS: $DTS_FILE"
+          
+          # 2. 预检设备专用 DTS 文件 (防覆盖检查)
+          # 如果设备专属的 dts 文件里未来被写入了 pwm-fan 或 cooling-levels，说明上游干预了风扇，需人工评估
+          if grep -q -E '&fan|cooling-levels' "$DTS_FILE"; then
+            echo "::error::Fan config overrides detected in $DTS_FILE!"
+            echo "::error::Upstream might have added specific fan logic. Manual intervention required."
+            exit 1
+          fi
+          
+          # 3. 前置校验 A: 确保源文件中存在目标节点 (严格匹配)
+          if ! grep -q 'cpu_trip_active_low: active-low {' "$DTSI_FILE"; then
+            echo "::error::Target node 'cpu_trip_active_low: active-low {' not found in $DTSI_FILE"
+            exit 1
+          fi
+          
+          # 4. 前置校验 B: 旧值严格检查 (确保上游依然是 40°C，防止上游静默修改导致盲目覆写)
+          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q 'temperature = <40000>;'; then
+            echo "::error::Unexpected upstream fan temperature value! Expected 40000."
+            exit 1
+          fi
+          
+          # 5. 执行修改: 仅替换 active-low 块里的温度值
+          sed -i '/cpu_trip_active_low: active-low {/,/};/ s/temperature = <40000>;/temperature = <70000>;/' "$DTSI_FILE"
+          
+          # 6. 后置双向验证 (精确作用域验证)
+          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q 'temperature = <70000>;'; then
+            echo "::error::Post-modification verification failed! Value not injected in the correct block."
+            exit 1
+          fi
+          
+          echo "Fan tweak success: Fan will remain off until 70°C."
+
       - name: Download packages
         run: |
           cd openwrt
