@@ -89,7 +89,7 @@ jobs:
           cd openwrt
           make defconfig
 
-      - name: Tweak Fan behavior (MT3600BE 70°C Smart Stop)
+      - name: Tweak Fan behavior (MT3600BE 75°C Smart Stop)
         run: |
           cd openwrt
           
@@ -129,15 +129,15 @@ jobs:
           fi
           
           # 5. 执行修改: 仅替换 active-low 块里的温度值
-          sed -i '/cpu_trip_active_low: active-low {/,/};/ s/temperature = <40000>;/temperature = <70000>;/' "$DTSI_FILE"
+          sed -i '/cpu_trip_active_low: active-low {/,/};/ s/temperature = <40000>;/temperature = <75000>;/' "$DTSI_FILE"
           
           # 6. 后置双向验证 (精确作用域验证)
-          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q 'temperature = <70000>;'; then
+          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q 'temperature = <75000>;'; then
             echo "::error::Post-modification verification failed! Value not injected in the correct block."
             exit 1
           fi
           
-          echo "Fan tweak success: Fan will remain off until 70°C."
+          echo "Fan tweak success: Fan will remain off until 75°C."
 
       - name: Download packages
         run: |
