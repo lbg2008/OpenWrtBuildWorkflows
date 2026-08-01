@@ -89,8 +89,13 @@ jobs:
           cd openwrt
           make defconfig
 
-      - name: Tweak Fan behavior (MT3600BE 75°C Smart Stop)
+      - name: Tweak Fan behavior (Smart Stop)
         run: |
+          # === ⚙️ 风扇温控配置区 ===
+          TARGET_TEMP_C=70                      # 在这里填入你想要的起转温度（摄氏度，官方默认75起转）
+          TARGET_TEMP_RAW="${TARGET_TEMP_C}000" # 自动转换为 DTS 所需的毫摄氏度 (如 75000)
+          # =========================
+          
           cd openwrt
           
           # 1. 动态定位文件 (锁定 dts 目录，避免误匹配 files/ 下的备份或补丁文件)
@@ -128,16 +133,16 @@ jobs:
             exit 1
           fi
           
-          # 5. 执行修改: 仅替换 active-low 块里的温度值
-          sed -i '/cpu_trip_active_low: active-low {/,/};/ s/temperature = <40000>;/temperature = <75000>;/' "$DTSI_FILE"
+          # 5. 执行修改: 仅替换 active-low 块里的温度值 (注意这里使用了双引号包裹 sed 表达式)
+          sed -i "/cpu_trip_active_low: active-low {/,/};/ s/temperature = <40000>;/temperature = <${TARGET_TEMP_RAW}>;/" "$DTSI_FILE"
           
-          # 6. 后置双向验证 (精确作用域验证)
-          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q 'temperature = <75000>;'; then
+          # 6. 后置双向验证 (精确作用域验证，同样使用双引号解析变量)
+          if ! sed -n '/cpu_trip_active_low: active-low {/,/};/p' "$DTSI_FILE" | grep -q "temperature = <${TARGET_TEMP_RAW}>;"; then
             echo "::error::Post-modification verification failed! Value not injected in the correct block."
             exit 1
           fi
           
-          echo "Fan tweak success: Fan will remain off until 75°C."
+          echo "Fan tweak success: Fan will remain off until ${TARGET_TEMP_C}°C."
 
       - name: Download packages
         run: |
