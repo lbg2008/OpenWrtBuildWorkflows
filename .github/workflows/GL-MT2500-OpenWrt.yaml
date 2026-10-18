@@ -6,11 +6,11 @@ on:
       repo_branch:
         description: '选择要编译的 OpenWrt 版本 (Branch 或 Tag)'
         required: true
-        default: 'v25.12.5'
+        default: 'v25.12.6'
         type: choice
         options:
           - openwrt-25.12
-          - v25.12.5
+          - v25.12.6
           - main
 
 env:
