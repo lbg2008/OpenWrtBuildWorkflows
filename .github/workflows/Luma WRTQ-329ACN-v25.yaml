@@ -1,12 +1,21 @@
-name: Build Luma WRTQ-329ACN (OpenWrt v25.12.5)
+name: Build Luma WRTQ-329ACN (Pure OpenWrt)
 
 on:
   workflow_dispatch:
-    # 彻底清空了 inputs，现在点击运行就是一键到底
+    inputs:
+      repo_branch:
+        description: '选择要编译的 OpenWrt 版本 (Tag 请带 tag: 前缀)'
+        required: true
+        default: 'tag:v25.12.6'
+        type: choice
+        options:
+          - openwrt-25.12
+          - tag:v25.12.6
+          - main
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: v25.12.6
+  REPO_INPUT: ${{ inputs.repo_branch }}
   CONFIG_FILE: configs/luma-v25.12.5.config
   TZ: Asia/Shanghai
 
@@ -57,10 +66,36 @@ jobs:
 
       - name: Clone source code
         working-directory: /workdir
+        shell: bash
         run: |
-          df -hT $PWD
-          git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
-          ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+          set -euo pipefail
+ 
+          df -hT "$PWD"
+ 
+          if [[ "$REPO_INPUT" == tag:* ]]; then
+            # Tag：完整克隆，再明确检出指定 Tag
+            REPO_BRANCH="${REPO_INPUT#tag:}"
+ 
+            git clone "$REPO_URL" openwrt
+            git -C openwrt checkout --detach "refs/tags/$REPO_BRANCH"
+          else
+            # Branch：仅克隆指定分支
+            REPO_BRANCH="$REPO_INPUT"
+ 
+            git clone \
+              --branch "$REPO_BRANCH" \
+              --single-branch \
+              "$REPO_URL" openwrt
+          fi
+ 
+          # 后续步骤使用规范化后的版本名称
+          echo "REPO_BRANCH=$REPO_BRANCH" >> "$GITHUB_ENV"
+ 
+          # 输出实际提交，便于排查版本问题
+          git -C openwrt log -1 \
+            --format='Commit: %H%nSubject: %s'
+ 
+          ln -sfn /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
 
       - name: Update feeds
         run: |
