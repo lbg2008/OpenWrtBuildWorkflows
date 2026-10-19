@@ -64,22 +64,36 @@ jobs:
 
       - name: Clone source code
         working-directory: /workdir
+        shell: bash
         run: |
-          df -hT $PWD
+          set -euo pipefail
+
+          df -hT "$PWD"
+
           if [[ "$REPO_INPUT" == tag:* ]]; then
-            # Tag：完整克隆后 checkout（不能用 --single-branch，否则可能拿不到该 tag）
+            # Tag：完整克隆，再明确检出指定 Tag
             REPO_BRANCH="${REPO_INPUT#tag:}"
-            git clone $REPO_URL openwrt
-            git -C openwrt checkout -q "$REPO_BRANCH"
+
+            git clone "$REPO_URL" openwrt
+            git -C openwrt checkout --detach "refs/tags/$REPO_BRANCH"
           else
-            # Branch：保持原来的方式
+            # Branch：仅克隆指定分支
             REPO_BRANCH="$REPO_INPUT"
-            git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
+
+            git clone \
+              --branch "$REPO_BRANCH" \
+              --single-branch \
+              "$REPO_URL" openwrt
           fi
-          # 后续步骤（Release tag 等）使用已去掉 tag: 前缀的名称
+
+          # 后续步骤使用规范化后的版本名称
           echo "REPO_BRANCH=$REPO_BRANCH" >> "$GITHUB_ENV"
-          git -C openwrt log -1 --oneline
-          ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+          # 输出实际提交，便于排查版本问题
+          git -C openwrt log -1 \
+            --format='Commit: %H%nSubject: %s'
+
+          ln -sfn /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
 
       - name: Update feeds
         run: |
