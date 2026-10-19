@@ -4,18 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       repo_branch:
-        description: '选择要编译的 OpenWrt 版本 (Branch 或 Tag)'
+        description: '选择要编译的 OpenWrt 版本'
         required: true
-        default: 'v25.12.6'
+        default: 'tag:v25.12.6'
         type: choice
         options:
           - openwrt-25.12
-          - v25.12.6
+          - tag:v25.12.6
           - main
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: ${{ inputs.repo_branch }}
+  REPO_INPUT: ${{ inputs.repo_branch }}
   CONFIG_FILE: configs/GL-MT2500-OpenWrt_v25.12.5.config
   TZ: Asia/Shanghai
 
@@ -66,8 +66,19 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          # git clone -b 完美兼容 Branch 和 Tag 的拉取
-          git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
+          if [[ "$REPO_INPUT" == tag:* ]]; then
+            # Tag：完整克隆后 checkout（不能用 --single-branch，否则可能拿不到该 tag）
+            REPO_BRANCH="${REPO_INPUT#tag:}"
+            git clone $REPO_URL openwrt
+            git -C openwrt checkout -q "$REPO_BRANCH"
+          else
+            # Branch：保持原来的方式
+            REPO_BRANCH="$REPO_INPUT"
+            git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
+          fi
+          # 后续步骤（Release tag 等）使用已去掉 tag: 前缀的名称
+          echo "REPO_BRANCH=$REPO_BRANCH" >> "$GITHUB_ENV"
+          git -C openwrt log -1 --oneline
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: Update feeds
